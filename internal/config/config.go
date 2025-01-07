@@ -23,7 +23,7 @@ type Database struct {
 	Name     string `yaml:"name"`
 	Password string `yaml:"password"`
 	SSLMode  string `yaml:"ssl_mode"`
-	MaxConns int    `yaml:"max_conns"`
+	MaxConns int32  `yaml:"max_conns"`
 }
 
 type Redis struct{}

@@ -1,17 +1,22 @@
 package order
 
-import desc "github.com/Avalance-rl/order-service/proto/pkg/order_v1"
+import (
+	desc "github.com/Avalance-rl/order-service/proto/pkg/order_v1"
+	"log/slog"
+)
 
 type Repository interface {
 	GetOrders(id string)
 }
 
 type Usecase struct {
+	logger     *slog.Logger
 	repository Repository
 }
 
-func NewOrderService(repository Repository) *Usecase {
+func NewOrderService(logger *slog.Logger, repository Repository) *Usecase {
 	return &Usecase{
+		logger:     logger,
 		repository: repository,
 	}
 }
