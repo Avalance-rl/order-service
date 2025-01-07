@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package order_v1;
+
+
+import "google/protobuf/timestamp.proto";
+
+
+option go_package = "avalance/order_v1";
+
+
+service OrderService {
+
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+
+  rpc GetOrders(GetOrdersRequest) returns (GetOrdersResponse);
+
+  rpc ConfirmOrder(ConfirmOrderRequest) returns (ConfirmOrderResponse);
+
+  rpc GetTotalPrice(GetTotalPriceRequest) returns (GetTotalPriceResponse);
+}
+
+message Order {
+  string id = 1;
+  string customer_id = 2;
+  OrderStatus status = 3;
+  repeated string product_list = 4;
+  uint64 total_price = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+enum OrderStatus {
+  ORDER_STATUS_UNPAID = 0;
+  ORDER_STATUS_PAID = 1;
+  ORDER_STATUS_COMPLETED = 2;
+}
+
+message CreateOrderRequest {
+  string customer_id = 1;
+  repeated string product_list = 2;
+}
+
+message CreateOrderResponse {
+  Order order = 1;
+}
+
+message GetOrdersRequest {
+  string customer_id = 1;
+}
+
+message GetOrdersResponse {
+  repeated Order orders = 1;
+}
+
+message ConfirmOrderRequest {
+  string order_id = 1;
+}
+
+message ConfirmOrderResponse {
+  Order order = 1;
+}
+
+message GetTotalPriceRequest {
+  string order_id = 1;
+}
+
+message GetTotalPriceResponse {
+  uint64 price = 1;
+}
+
+
