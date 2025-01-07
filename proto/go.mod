@@ -1,4 +1,4 @@
-module order-service/proto
+module github.com/Avalance-rl/order-service/proto
 
 go 1.23
 
