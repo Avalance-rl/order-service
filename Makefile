@@ -1,3 +1,6 @@
+pre-commit:
+	pre-commit run --all-files
+
 golint:
 	golangci-lint run --config githooks/.golangci.yaml --issues-exit-code 0
 

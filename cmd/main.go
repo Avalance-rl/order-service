@@ -9,9 +9,9 @@ import (
 )
 
 func main() {
-	logger := logger.InitLogger()
+	l := logger.InitLogger()
 	defer func() {
-		err := logger.Sync()
+		err := l.Sync()
 		if err != nil {
 			panic(err)
 		}
@@ -19,13 +19,13 @@ func main() {
 
 	ctx := context.Background()
 
-	a, err := application.NewApp(ctx, logger)
+	a, err := application.NewApp(ctx, l)
 	if err != nil {
-		logger.Fatal("failed to init app: %s", zap.Error(err))
+		l.Fatal("failed to init app: %s", zap.Error(err))
 	}
 
 	err = a.Run()
 	if err != nil {
-		logger.Fatal("failed to run app: %s", zap.Error(err))
+		l.Fatal("failed to run app: %s", zap.Error(err))
 	}
 }
