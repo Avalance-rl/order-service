@@ -64,7 +64,7 @@ func (a *App) initGRPCServer(_ context.Context) error {
 }
 
 func (a *App) runGRPCServer() error {
-	log.Printf("GRPC server is running on %s", a.serviceProvider.Config().GRPCServer.Address)
+	log.Printf("GRPC server is running on %s", a.serviceProvider.Config().GRPCServer.Address+":"+a.serviceProvider.Config().GRPCServer.Port)
 
 	list, err := net.Listen(
 		"tcp",

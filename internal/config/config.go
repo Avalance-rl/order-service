@@ -18,7 +18,7 @@ type GRPCServer struct {
 
 type Database struct {
 	Host     string `yaml:"host"`
-	Port     uint   `yaml:"port"`
+	Port     string `yaml:"port"`
 	User     string `yaml:"user"`
 	Name     string `yaml:"name"`
 	Password string `yaml:"password"`

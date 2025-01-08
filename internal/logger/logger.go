@@ -8,11 +8,16 @@ import (
 
 func InitLogger() *zap.Logger {
 	config := zap.NewProductionConfig()
-	logFile, err := os.OpenFile("application.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		panic(err)
+	config.OutputPaths = []string{
+		"logs/application.log",
+		"stderr",
 	}
-	config.OutputPaths = []string{logFile.Name()}
+
+	config.ErrorOutputPaths = []string{
+		"logs/error.log",
+		"stderr",
+	}
+
 	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	config.EncoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
 

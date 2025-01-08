@@ -24,20 +24,22 @@ func newServiceProvider(ctx context.Context, logger *zap.Logger) *provider {
 }
 
 func (s *provider) Config() config.Config {
-	if s.Config == nil {
-		cfg, err := config.Load(os.Getenv("CONFIG_PATH"))
-		if err != nil {
-			panic(err)
-		}
-		s.config = cfg
+	cfg, err := config.Load(os.Getenv("CONFIG_PATH"))
+	if err != nil {
+		panic(err)
 	}
+	s.config = cfg
 
 	return s.config
 }
 
 func (s *provider) OrderRepository() usecaseOrder.Repository {
 	if s.orderRepository == nil {
-		s.orderRepository, _ = orderRepo.NewRepository(s.Config().Database.Name, s.Config().Database.MaxConns, nil)
+		rep, err := orderRepo.NewRepository(s.Config().Database.Name, s.Config().Database.MaxConns, nil)
+		if err != nil {
+			s.logger.Fatal("orderRepository error", zap.Error(err))
+		}
+		s.orderRepository = rep
 	}
 
 	return s.orderRepository

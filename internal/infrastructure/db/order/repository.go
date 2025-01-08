@@ -18,7 +18,6 @@ func NewRepository(connString string, maxConns int32, logger *slog.Logger) (*Rep
 	config.MaxConns = maxConns
 
 	db, err := pgxpool.NewWithConfig(context.Background(), config)
-
 	return &Repository{db}, nil
 }
 
