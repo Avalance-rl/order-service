@@ -7,11 +7,12 @@
 package order_v1
 
 import (
+	reflect "reflect"
+	sync "sync"
+
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
-	reflect "reflect"
-	sync "sync"
 )
 
 const (
@@ -646,21 +647,23 @@ func file_order_proto_rawDescGZIP() []byte {
 	return file_order_proto_rawDescData
 }
 
-var file_order_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_order_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
-var file_order_proto_goTypes = []interface{}{
-	(OrderStatus)(0),              // 0: order_v1.OrderStatus
-	(*Order)(nil),                 // 1: order_v1.Order
-	(*CreateOrderRequest)(nil),    // 2: order_v1.CreateOrderRequest
-	(*CreateOrderResponse)(nil),   // 3: order_v1.CreateOrderResponse
-	(*GetOrdersRequest)(nil),      // 4: order_v1.GetOrdersRequest
-	(*GetOrdersResponse)(nil),     // 5: order_v1.GetOrdersResponse
-	(*ConfirmOrderRequest)(nil),   // 6: order_v1.ConfirmOrderRequest
-	(*ConfirmOrderResponse)(nil),  // 7: order_v1.ConfirmOrderResponse
-	(*GetTotalPriceRequest)(nil),  // 8: order_v1.GetTotalPriceRequest
-	(*GetTotalPriceResponse)(nil), // 9: order_v1.GetTotalPriceResponse
-	(*timestamppb.Timestamp)(nil), // 10: google.protobuf.Timestamp
-}
+var (
+	file_order_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+	file_order_proto_msgTypes  = make([]protoimpl.MessageInfo, 9)
+	file_order_proto_goTypes   = []interface{}{
+		(OrderStatus)(0),              // 0: order_v1.OrderStatus
+		(*Order)(nil),                 // 1: order_v1.Order
+		(*CreateOrderRequest)(nil),    // 2: order_v1.CreateOrderRequest
+		(*CreateOrderResponse)(nil),   // 3: order_v1.CreateOrderResponse
+		(*GetOrdersRequest)(nil),      // 4: order_v1.GetOrdersRequest
+		(*GetOrdersResponse)(nil),     // 5: order_v1.GetOrdersResponse
+		(*ConfirmOrderRequest)(nil),   // 6: order_v1.ConfirmOrderRequest
+		(*ConfirmOrderResponse)(nil),  // 7: order_v1.ConfirmOrderResponse
+		(*GetTotalPriceRequest)(nil),  // 8: order_v1.GetTotalPriceRequest
+		(*GetTotalPriceResponse)(nil), // 9: order_v1.GetTotalPriceResponse
+		(*timestamppb.Timestamp)(nil), // 10: google.protobuf.Timestamp
+	}
+)
 var file_order_proto_depIdxs = []int32{
 	0,  // 0: order_v1.Order.status:type_name -> order_v1.OrderStatus
 	10, // 1: order_v1.Order.created_at:type_name -> google.protobuf.Timestamp

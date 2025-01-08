@@ -8,6 +8,7 @@ package order_v1
 
 import (
 	context "context"
+
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -84,18 +85,20 @@ type OrderServiceServer interface {
 }
 
 // UnimplementedOrderServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedOrderServiceServer struct {
-}
+type UnimplementedOrderServiceServer struct{}
 
 func (UnimplementedOrderServiceServer) CreateOrder(context.Context, *CreateOrderRequest) (*CreateOrderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrder not implemented")
 }
+
 func (UnimplementedOrderServiceServer) GetOrders(context.Context, *GetOrdersRequest) (*GetOrdersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOrders not implemented")
 }
+
 func (UnimplementedOrderServiceServer) ConfirmOrder(context.Context, *ConfirmOrderRequest) (*ConfirmOrderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfirmOrder not implemented")
 }
+
 func (UnimplementedOrderServiceServer) GetTotalPrice(context.Context, *GetTotalPriceRequest) (*GetTotalPriceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTotalPrice not implemented")
 }
