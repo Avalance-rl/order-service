@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:17-alpine3.20
+    environment:
+      POSTGRES_DB: "order-service"
+      POSTGRES_USER: "order-user"
+      POSTGRES_PASSWORD: "temporaryPassword"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "9007:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U order-user -d order-service"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  pgdata:

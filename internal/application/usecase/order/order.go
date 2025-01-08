@@ -2,7 +2,7 @@ package order
 
 import (
 	desc "github.com/Avalance-rl/order-service/proto/pkg/order_v1"
-	"log/slog"
+	"go.uber.org/zap"
 )
 
 type Repository interface {
@@ -10,11 +10,11 @@ type Repository interface {
 }
 
 type Usecase struct {
-	logger     *slog.Logger
+	logger     *zap.Logger
 	repository Repository
 }
 
-func NewOrderService(logger *slog.Logger, repository Repository) *Usecase {
+func NewOrderService(logger *zap.Logger, repository Repository) *Usecase {
 	return &Usecase{
 		logger:     logger,
 		repository: repository,

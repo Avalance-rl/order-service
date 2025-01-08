@@ -6,7 +6,7 @@ import (
 	"github.com/Avalance-rl/order-service/internal/config"
 	orderRepo "github.com/Avalance-rl/order-service/internal/infrastructure/db/order"
 	grpcServer "github.com/Avalance-rl/order-service/internal/infrastructure/grpc/server/order"
-	"log/slog"
+	"go.uber.org/zap"
 	"os"
 )
 
@@ -16,10 +16,10 @@ type provider struct {
 	orderUsecase    grpcServer.UsecaseOrder
 	orderImpl       *grpcServer.Implementation
 	ctx             context.Context
-	logger          *slog.Logger
+	logger          *zap.Logger
 }
 
-func newServiceProvider(ctx context.Context, logger *slog.Logger) *provider {
+func newServiceProvider(ctx context.Context, logger *zap.Logger) *provider {
 	return &provider{ctx: ctx, logger: logger}
 }
 
