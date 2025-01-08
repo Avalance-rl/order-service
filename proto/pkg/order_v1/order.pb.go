@@ -664,6 +664,7 @@ var (
 		(*timestamppb.Timestamp)(nil), // 10: google.protobuf.Timestamp
 	}
 )
+
 var file_order_proto_depIdxs = []int32{
 	0,  // 0: order_v1.Order.status:type_name -> order_v1.OrderStatus
 	10, // 1: order_v1.Order.created_at:type_name -> google.protobuf.Timestamp
