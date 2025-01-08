@@ -2,3 +2,4 @@
 /cmd/application.log
 /config/
 /logs/
+/.env

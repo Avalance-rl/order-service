@@ -23,43 +23,53 @@ func newServiceProvider(ctx context.Context, logger *zap.Logger) *provider {
 	return &provider{ctx: ctx, logger: logger}
 }
 
-func (s *provider) Config() config.Config {
+func (p *provider) Config() config.Config {
 	cfg, err := config.Load(os.Getenv("CONFIG_PATH"))
 	if err != nil {
 		panic(err)
 	}
-	s.config = cfg
+	p.config = cfg
 
-	return s.config
+	return p.config
 }
 
-func (s *provider) OrderRepository() usecaseOrder.Repository {
-	if s.orderRepository == nil {
-		rep, err := orderRepo.NewRepository(s.Config().Database.Name, s.Config().Database.MaxConns, nil)
+func (p *provider) OrderRepository() usecaseOrder.Repository {
+	if p.orderRepository == nil {
+
+		rep, err := orderRepo.NewRepository(
+			p.Config().Database.Host,
+			p.Config().Database.Port,
+			p.Config().Database.SSLMode,
+			p.Config().Database.User,
+			p.Config().Database.Password,
+			p.Config().Database.Name,
+			p.Config().Database.MaxConns,
+			p.logger,
+		)
 		if err != nil {
-			s.logger.Fatal("orderRepository error", zap.Error(err))
+			p.logger.Fatal("orderRepository error", zap.Error(err))
 		}
-		s.orderRepository = rep
+		p.orderRepository = rep
 	}
 
-	return s.orderRepository
+	return p.orderRepository
 }
 
-func (s *provider) OrderUsecase() grpcServer.UsecaseOrder {
-	if s.orderUsecase == nil {
-		s.orderUsecase = usecaseOrder.NewOrderService(
-			s.logger,
-			s.OrderRepository(),
+func (p *provider) OrderUsecase() grpcServer.UsecaseOrder {
+	if p.orderUsecase == nil {
+		p.orderUsecase = usecaseOrder.NewOrderService(
+			p.logger,
+			p.OrderRepository(),
 		)
 	}
 
-	return s.orderUsecase
+	return p.orderUsecase
 }
 
-func (s *provider) OrderImpl() *grpcServer.Implementation {
-	if s.orderImpl == nil {
-		s.orderImpl = grpcServer.NewImplementation(s.OrderUsecase())
+func (p *provider) OrderImpl() *grpcServer.Implementation {
+	if p.orderImpl == nil {
+		p.orderImpl = grpcServer.NewImplementation(p.OrderUsecase())
 	}
 
-	return s.orderImpl
+	return p.orderImpl
 }

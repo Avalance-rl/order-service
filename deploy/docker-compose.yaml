@@ -6,7 +6,7 @@ services:
     environment:
       POSTGRES_DB: "order-service"
       POSTGRES_USER: "order-user"
-      POSTGRES_PASSWORD: "temporaryPassword"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
@@ -17,6 +17,21 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+
+  order-service:
+    build:
+      context: ../
+      dockerfile: build/Dockerfile
+    environment:
+      - CONFIG_PATH=config/config.yaml
+      - LOG_LEVEL=debug
+    ports:
+      - "9001:8080"
+    volumes:
+      - ../config/config.yaml:/app/config/config.yaml
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   pgdata:
