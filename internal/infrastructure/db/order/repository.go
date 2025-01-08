@@ -3,6 +3,7 @@ package order
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"
 )
@@ -24,6 +25,9 @@ func NewRepository(
 	config.MaxConns = maxConns
 
 	db, err := pgxpool.NewWithConfig(context.Background(), config)
+	if err != nil {
+		return nil, err
+	}
 	return &Repository{db, logger}, nil
 }
 

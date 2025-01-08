@@ -1,0 +1,14 @@
+issues:
+  exclude-files:
+    - ".*_test\\.go$"
+  new-from-rev: HEAD~
+
+linters:
+  enable:
+    - errcheck
+    - govet
+    - staticcheck
+    - gosimple
+    - unused
+    - nakedret
+    - prealloc

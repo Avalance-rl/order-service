@@ -2,13 +2,14 @@ package application
 
 import (
 	"context"
+	"log"
+	"net"
+
 	desc "github.com/Avalance-rl/order-service/proto/pkg/order_v1"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
-	"log"
-	"net"
 )
 
 type App struct {
@@ -70,7 +71,6 @@ func (a *App) runGRPCServer() error {
 		"tcp",
 		a.serviceProvider.Config().GRPCServer.Address+
 			":"+a.serviceProvider.Config().GRPCServer.Port)
-
 	if err != nil {
 		return err
 	}

@@ -1,0 +1,23 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-yaml
+
+  - repo: local
+    hooks:
+      - id: golangci-lint
+        name: 'golangci-lint'
+        entry: githooks/run-golangci-lint.sh
+        types: [ 'go' ]
+        exclude: "^_test.go$"
+        language: 'script'
+        require_serial: true
+        pass_filenames: false
+        description: "Run `golangci-lint`, requires https://github.com/golangci/golangci-lint"
+      - id: gofumpt
+        name: 'gofumpt'
+        entry: githooks/run-gofumpt.sh
+        types: [ 'go' ]
+        language: 'script'
+        description: "Run `gofumpt`, requires golang"

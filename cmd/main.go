@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+
 	"github.com/Avalance-rl/order-service/internal/application"
 	"github.com/Avalance-rl/order-service/internal/logger"
 	"go.uber.org/zap"
@@ -9,7 +10,12 @@ import (
 
 func main() {
 	logger := logger.InitLogger()
-	defer logger.Sync()
+	defer func() {
+		err := logger.Sync()
+		if err != nil {
+			panic(err)
+		}
+	}()
 
 	ctx := context.Background()
 

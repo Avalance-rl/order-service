@@ -2,12 +2,13 @@ package application
 
 import (
 	"context"
+	"os"
+
 	usecaseOrder "github.com/Avalance-rl/order-service/internal/application/usecase/order"
 	"github.com/Avalance-rl/order-service/internal/config"
 	orderRepo "github.com/Avalance-rl/order-service/internal/infrastructure/db/order"
 	grpcServer "github.com/Avalance-rl/order-service/internal/infrastructure/grpc/server/order"
 	"go.uber.org/zap"
-	"os"
 )
 
 type provider struct {
