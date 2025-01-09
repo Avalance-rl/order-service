@@ -1,12 +1,20 @@
 package order
 
 import (
+	"context"
+
+	"github.com/Avalance-rl/order-service/internal/domain/model"
+	repoModel "github.com/Avalance-rl/order-service/internal/infrastructure/db/order/model"
 	desc "github.com/Avalance-rl/order-service/proto/pkg/order_v1"
 	"go.uber.org/zap"
 )
 
 type Repository interface {
-	GetOrders(id string)
+	CreateOrder(ctx context.Context, order repoModel.Order) (model.Order, error)
+	GetOrders(ctx context.Context, id string) ([]model.Order, error)
+	UpdateOrderStatus(ctx context.Context, id string) (model.OrderStatus, error)
+	ConfirmOrder(ctx context.Context, id string) (model.OrderStatus, error)
+	GetTotalPrice(ctx context.Context, id string) (uint, error)
 }
 
 type Usecase struct {

@@ -28,10 +28,27 @@ func NewRepository(
 	if err != nil {
 		return nil, err
 	}
+	err = db.Ping(context.Background())
+	if err != nil {
+		return nil, err
+	}
 	return &Repository{db, logger}, nil
 }
 
-func (r *Repository) Close() {}
+func (r *Repository) Close(ctx context.Context) error {
+	done := make(chan struct{}, 1)
+	go func() {
+		r.pool.Close()
+		done <- struct{}{}
+	}()
+
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-done:
+		return nil
+	}
+}
 
 func buildPostgresDns(host, port, sslMode, user, password, name string) string {
 	return fmt.Sprintf(
