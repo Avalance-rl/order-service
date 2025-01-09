@@ -3,3 +3,4 @@
 /config/
 /logs/
 /.env
+/internal/infrastructure/db/order/order_test.go
