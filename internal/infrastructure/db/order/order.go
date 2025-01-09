@@ -93,3 +93,69 @@ func (r *Repository) GetOrders(ctx context.Context, id string) ([]model.Order, e
 
 	return orders, nil
 }
+
+func (r *Repository) UpdateOrderStatus(ctx context.Context, id string) (model.OrderStatus, error) {
+	sb := sqlbuilder.NewUpdateBuilder()
+	sb.SetFlavor(sqlbuilder.PostgreSQL)
+	sb.Update("orders").
+		Set("order_status", string(repoModel.Paid)).
+		Where(sb.Equal("id", id)).
+		SQL("RETURNING order_status")
+	sql, args := sb.Build()
+
+	row := r.pool.QueryRow(ctx, sql, args...)
+
+	var orderStatus model.OrderStatus
+	err := row.Scan(
+		&orderStatus,
+	)
+	if err != nil {
+		return "", fmt.Errorf("update order status: %w", err)
+	}
+
+	return orderStatus, nil
+}
+
+func (r *Repository) ConfirmOrder(ctx context.Context, id string) (model.OrderStatus, error) {
+	sb := sqlbuilder.NewUpdateBuilder()
+	sb.SetFlavor(sqlbuilder.PostgreSQL)
+	sb.Update("orders").
+		Set("order_status", string(repoModel.Completed)).
+		Where(sb.Equal("id", id)).
+		SQL("RETURNING order_status")
+	sql, args := sb.Build()
+
+	row := r.pool.QueryRow(ctx, sql, args...)
+
+	var orderStatus model.OrderStatus
+	err := row.Scan(
+		&orderStatus,
+	)
+	if err != nil {
+		return "", fmt.Errorf("confirm order: %w", err)
+	}
+
+	return orderStatus, nil
+}
+
+func (r *Repository) GetTotalPrice(ctx context.Context, id string) (uint, error) {
+	sb := sqlbuilder.NewSelectBuilder()
+	sb.SetFlavor(sqlbuilder.PostgreSQL)
+
+	sb.Select("SUM(p.price)").
+		From("orders o").
+		Join("products p", "p.id = ANY(o.product_list)").
+		Where(sb.Equal("o.id", id))
+
+	sql, args := sb.Build()
+
+	row := r.pool.QueryRow(ctx, sql, args...)
+
+	var totalPrice uint
+	err := row.Scan(&totalPrice)
+	if err != nil {
+		return 0, fmt.Errorf("get total price: %w", err)
+	}
+
+	return totalPrice, nil
+}

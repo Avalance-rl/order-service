@@ -3,7 +3,7 @@ module github.com/Avalance-rl/order-service
 go 1.23
 
 require (
-	github.com/Avalance-rl/order-service/proto v0.0.0-20250107172846-1e29358814f1
+	github.com/Avalance-rl/order-service/proto v0.0.0-20250109113547-42a7a513a428
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/jackc/pgx/v5 v5.7.2
 	go.uber.org/zap v1.27.0
