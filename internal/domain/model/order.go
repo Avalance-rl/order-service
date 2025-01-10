@@ -5,15 +5,15 @@ import "time"
 type OrderStatus string
 
 const (
-	unpaid    = OrderStatus("UNPAID")
-	paid      = OrderStatus("PAID")
-	completed = OrderStatus("COMPLETED")
+	Unpaid    = OrderStatus("UNPAID")
+	Paid      = OrderStatus("PAID")
+	Completed = OrderStatus("COMPLETED")
 )
 
 type Order struct {
 	ID          string
 	CustomerID  string
-	OrderStatus string
+	OrderStatus OrderStatus
 	ProductList []string
 	TotalPrice  uint
 	CreatedAt   time.Time
