@@ -2,9 +2,9 @@ package application
 
 import (
 	"context"
+	usecaseOrder "github.com/Avalance-rl/order-service/internal/domain/usecase"
 	"os"
 
-	usecaseOrder "github.com/Avalance-rl/order-service/internal/application/usecase/order"
 	"github.com/Avalance-rl/order-service/internal/config"
 	orderRepo "github.com/Avalance-rl/order-service/internal/infrastructure/db/order"
 	grpcServer "github.com/Avalance-rl/order-service/internal/infrastructure/grpc/server/order"
