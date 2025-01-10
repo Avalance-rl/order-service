@@ -10,7 +10,7 @@ import (
 	"github.com/huandu/go-sqlbuilder"
 )
 
-func (r *Repository) CreateOrder(ctx context.Context, order repoModel.Order) (model.Order, error) {
+func (r *Repository) InsertOrder(ctx context.Context, order model.Order) (model.Order, error) {
 	productList := "{" + strings.Join(order.ProductList, ",") + "}"
 
 	sb := sqlbuilder.NewInsertBuilder()
@@ -57,7 +57,7 @@ func (r *Repository) CreateOrder(ctx context.Context, order repoModel.Order) (mo
 	return returnedOrder, nil
 }
 
-func (r *Repository) GetOrders(ctx context.Context, id string) ([]model.Order, error) {
+func (r *Repository) SelectOrders(ctx context.Context, id string) ([]model.Order, error) {
 	sb := sqlbuilder.NewSelectBuilder()
 	sb.SetFlavor(sqlbuilder.PostgreSQL)
 	sb.Select("*").From("orders").Where(sb.Equal("id", id))
@@ -116,7 +116,7 @@ func (r *Repository) UpdateOrderStatus(ctx context.Context, id string) (model.Or
 	return orderStatus, nil
 }
 
-func (r *Repository) ConfirmOrder(ctx context.Context, id string) (model.OrderStatus, error) {
+func (r *Repository) UpdateOrderStatusToConfirm(ctx context.Context, id string) (model.OrderStatus, error) {
 	sb := sqlbuilder.NewUpdateBuilder()
 	sb.SetFlavor(sqlbuilder.PostgreSQL)
 	sb.Update("orders").

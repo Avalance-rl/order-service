@@ -8,7 +8,7 @@ import (
 
 type UsecaseOrder interface {
 	CreateOrder(ctx context.Context, order model.Order) (model.Order, error)
-	GetOrders(ctx context.Context, id string) (model.Order, error)
+	GetOrders(ctx context.Context, id string) ([]model.Order, error)
 	UpdateOrderStatus(ctx context.Context, id string) (model.OrderStatus, error)
 	ConfirmOrder(ctx context.Context, id string) (model.OrderStatus, error)
 	GetTotalPrice(ctx context.Context, id string) (uint, error)
