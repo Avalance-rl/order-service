@@ -11,7 +11,7 @@ type UsecaseOrder interface {
 	GetOrders(ctx context.Context, id string) ([]model.Order, error)
 	UpdateOrderStatus(ctx context.Context, id string) (model.OrderStatus, error)
 	ConfirmOrder(ctx context.Context, id string) (model.OrderStatus, error)
-	GetTotalPrice(ctx context.Context, id string) (uint, error)
+	GetTotalPriceByID(ctx context.Context, id string) (uint, error)
 }
 
 type Implementation struct {

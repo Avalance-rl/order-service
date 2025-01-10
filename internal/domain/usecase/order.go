@@ -11,7 +11,8 @@ type Repository interface {
 	SelectOrders(ctx context.Context, id string) ([]model.Order, error)
 	UpdateOrderStatus(ctx context.Context, id string) (model.OrderStatus, error)
 	UpdateOrderStatusToConfirm(ctx context.Context, id string) (model.OrderStatus, error)
-	GetTotalPrice(ctx context.Context, id string) (uint, error)
+	GetTotalPrice(ctx context.Context, productList []string) (uint, error)
+	GetTotalPriceByID(ctx context.Context, id string) (uint, error)
 }
 
 type Usecase struct {
@@ -27,6 +28,12 @@ func NewOrderService(logger *zap.Logger, repository Repository) *Usecase {
 }
 
 func (uc *Usecase) CreateOrder(ctx context.Context, order model.Order) (model.Order, error) {
+	price, err := uc.GetTotalPrice(ctx, order.ProductList)
+	if err != nil {
+		return model.Order{}, err
+	}
+
+	order.TotalPrice = price
 	writtenOrder, err := uc.repository.InsertOrder(ctx, order)
 	if err != nil {
 		return model.Order{}, err
@@ -62,8 +69,17 @@ func (uc *Usecase) ConfirmOrder(ctx context.Context, id string) (model.OrderStat
 	return status, nil
 }
 
-func (uc *Usecase) GetTotalPrice(ctx context.Context, id string) (uint, error) {
-	price, err := uc.repository.GetTotalPrice(ctx, id)
+func (uc *Usecase) GetTotalPrice(ctx context.Context, productList []string) (uint, error) {
+	price, err := uc.repository.GetTotalPrice(ctx, productList)
+	if err != nil {
+		return 0, err
+	}
+
+	return price, nil
+}
+
+func (uc *Usecase) GetTotalPriceByID(ctx context.Context, id string) (uint, error) {
+	price, err := uc.repository.GetTotalPriceByID(ctx, id)
 	if err != nil {
 		return 0, err
 	}

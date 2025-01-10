@@ -3,6 +3,7 @@ package order
 import (
 	"context"
 	"fmt"
+	"github.com/Avalance-rl/order-service/internal/infrastructure/db/order/converter"
 	"strings"
 
 	"github.com/Avalance-rl/order-service/internal/domain/model"
@@ -11,13 +12,14 @@ import (
 )
 
 func (r *Repository) InsertOrder(ctx context.Context, order model.Order) (model.Order, error) {
-	productList := "{" + strings.Join(order.ProductList, ",") + "}"
+	repoOrder := converter.ToOrderFromUsecase(&order)
+
+	productList := "{" + strings.Join(repoOrder.ProductList, ",") + "}"
 
 	sb := sqlbuilder.NewInsertBuilder()
 	sb.SetFlavor(sqlbuilder.PostgreSQL)
 	sb.InsertInto("orders").
 		Cols(
-			"id",
 			"customer_id",
 			"order_status",
 			"product_list",
@@ -26,41 +28,36 @@ func (r *Repository) InsertOrder(ctx context.Context, order model.Order) (model.
 			"updated_at",
 		).
 		Values(
-			order.ID,
-			order.CustomerID,
-			order.OrderStatus,
+			repoOrder.CustomerID,
+			repoModel.Unpaid,
 			productList,
-			order.TotalPrice,
-			order.CreatedAt,
-			order.UpdatedAt,
+			repoOrder.TotalPrice,
+			repoOrder.CreatedAt,
+			repoOrder.UpdatedAt,
 		).
 		SQL("RETURNING id, created_at, updated_at")
+
 	sql, args := sb.Build()
 
 	row := r.pool.QueryRow(ctx, sql, args...)
 
-	var returnedOrder model.Order
 	err := row.Scan(
-		&returnedOrder.ID,
-		&returnedOrder.CreatedAt,
-		&returnedOrder.UpdatedAt,
+		&repoOrder.ID,
+		&repoOrder.CreatedAt,
+		&repoOrder.UpdatedAt,
 	)
-	returnedOrder.CustomerID = order.CustomerID
-	returnedOrder.OrderStatus = order.OrderStatus
-	returnedOrder.ProductList = order.ProductList
-	returnedOrder.TotalPrice = order.TotalPrice
-
 	if err != nil {
 		return model.Order{}, fmt.Errorf("insert order: %w", err)
 	}
 
-	return returnedOrder, nil
+	return *converter.ToOrderFromRepo(repoOrder), nil
 }
 
 func (r *Repository) SelectOrders(ctx context.Context, id string) ([]model.Order, error) {
 	sb := sqlbuilder.NewSelectBuilder()
 	sb.SetFlavor(sqlbuilder.PostgreSQL)
 	sb.Select("*").From("orders").Where(sb.Equal("id", id))
+
 	sql, args := sb.Build()
 
 	rows, err := r.pool.Query(ctx, sql, args...)
@@ -101,6 +98,7 @@ func (r *Repository) UpdateOrderStatus(ctx context.Context, id string) (model.Or
 		Set("order_status", string(repoModel.Paid)).
 		Where(sb.Equal("id", id)).
 		SQL("RETURNING order_status")
+
 	sql, args := sb.Build()
 
 	row := r.pool.QueryRow(ctx, sql, args...)
@@ -123,6 +121,7 @@ func (r *Repository) UpdateOrderStatusToConfirm(ctx context.Context, id string) 
 		Set("order_status", string(repoModel.Completed)).
 		Where(sb.Equal("id", id)).
 		SQL("RETURNING order_status")
+
 	sql, args := sb.Build()
 
 	row := r.pool.QueryRow(ctx, sql, args...)
@@ -138,14 +137,30 @@ func (r *Repository) UpdateOrderStatusToConfirm(ctx context.Context, id string) 
 	return orderStatus, nil
 }
 
-func (r *Repository) GetTotalPrice(ctx context.Context, id string) (uint, error) {
+func (r *Repository) GetTotalPrice(ctx context.Context, productList []string) (uint, error) {
 	sb := sqlbuilder.NewSelectBuilder()
 	sb.SetFlavor(sqlbuilder.PostgreSQL)
+	sb.Select("SUM(price)").
+		From("products").
+		Where(sb.In("id", productList))
 
-	sb.Select("SUM(p.price)").
-		From("orders o").
-		Join("products p", "p.id = ANY(o.product_list)").
-		Where(sb.Equal("o.id", id))
+	sql, args := sb.Build()
+
+	row := r.pool.QueryRow(ctx, sql, args...)
+
+	var totalPrice uint
+	err := row.Scan(&totalPrice)
+	if err != nil {
+		return 0, fmt.Errorf("get total price: %w", err)
+	}
+
+	return totalPrice, nil
+}
+
+func (r *Repository) GetTotalPriceByID(ctx context.Context, id string) (uint, error) {
+	sb := sqlbuilder.NewSelectBuilder()
+	sb.SetFlavor(sqlbuilder.PostgreSQL)
+	sb.Select("total_price").From("orders").Where(sb.Equal("id", id))
 
 	sql, args := sb.Build()
 
