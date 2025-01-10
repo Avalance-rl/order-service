@@ -46,5 +46,4 @@ func ToOrderFromDesc(order *desc.Order) *model.Order {
 		CreatedAt:   order.CreatedAt.AsTime(),
 		UpdatedAt:   order.UpdatedAt.AsTime(),
 	}
-
 }

@@ -2,8 +2,9 @@ package application
 
 import (
 	"context"
-	usecaseOrder "github.com/Avalance-rl/order-service/internal/domain/usecase"
 	"os"
+
+	usecaseOrder "github.com/Avalance-rl/order-service/internal/domain/usecase"
 
 	"github.com/Avalance-rl/order-service/internal/config"
 	orderRepo "github.com/Avalance-rl/order-service/internal/infrastructure/db/order"

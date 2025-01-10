@@ -2,6 +2,7 @@ package order
 
 import (
 	"context"
+
 	"github.com/Avalance-rl/order-service/internal/domain/model"
 	desc "github.com/Avalance-rl/order-service/proto/pkg/order_v1"
 )

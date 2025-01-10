@@ -3,8 +3,9 @@ package order
 import (
 	"context"
 	"fmt"
-	"github.com/Avalance-rl/order-service/internal/infrastructure/db/order/converter"
 	"strings"
+
+	"github.com/Avalance-rl/order-service/internal/infrastructure/db/order/converter"
 
 	"github.com/Avalance-rl/order-service/internal/domain/model"
 	repoModel "github.com/Avalance-rl/order-service/internal/infrastructure/db/order/model"
