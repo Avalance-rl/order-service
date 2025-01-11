@@ -4,20 +4,22 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgconn"
 	"strings"
 
-	"github.com/Avalance-rl/order-service/internal/infrastructure/db/order/converter"
+	"github.com/Avalance-rl/order-service/internal/infrastructure/repository"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
+
+	"github.com/Avalance-rl/order-service/internal/infrastructure/repository/order/converter"
 
 	"github.com/Avalance-rl/order-service/internal/domain/model"
-	repoModel "github.com/Avalance-rl/order-service/internal/infrastructure/db/order/model"
+	repoModel "github.com/Avalance-rl/order-service/internal/infrastructure/repository/order/model"
 	"github.com/huandu/go-sqlbuilder"
 )
 
 func (r *Repository) InsertOrder(ctx context.Context, order model.Order) (model.Order, error) {
 	if len(order.ProductList) == 0 {
-		return model.Order{}, fmt.Errorf("%w: empty product list", ErrInvalidInput)
+		return model.Order{}, fmt.Errorf("%w: empty product list", repository.ErrInvalidInput)
 	}
 
 	repoOrder := converter.ToOrderFromService(&order)
@@ -58,9 +60,9 @@ func (r *Repository) InsertOrder(ctx context.Context, order model.Order) (model.
 		if errors.As(err, &pgErr) {
 			switch pgErr.Code {
 			case "23503":
-				return model.Order{}, fmt.Errorf("%w: invalid customer_id or product_id", ErrForeignKey)
+				return model.Order{}, fmt.Errorf("%w: invalid customer_id or product_id", repository.ErrForeignKey)
 			case "23505":
-				return model.Order{}, fmt.Errorf("%w: order already exists", ErrDuplicateKey)
+				return model.Order{}, fmt.Errorf("%w: order already exists", repository.ErrDuplicateKey)
 			}
 		}
 
@@ -80,7 +82,7 @@ func (r *Repository) SelectOrders(ctx context.Context, id string) ([]model.Order
 	rows, err := r.pool.Query(ctx, sql, args...)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, fmt.Errorf("%w: orders not found", ErrNotFound)
+			return nil, fmt.Errorf("%w: orders not found", repository.ErrNotFound)
 		}
 		return nil, fmt.Errorf("execute query unexpected error: %w", err)
 	}
@@ -109,7 +111,7 @@ func (r *Repository) SelectOrders(ctx context.Context, id string) ([]model.Order
 	}
 
 	if len(orders) == 0 {
-		return nil, fmt.Errorf("%w: no orders found", ErrNotFound)
+		return nil, fmt.Errorf("%w: no orders found", repository.ErrNotFound)
 	}
 
 	return orders, nil
@@ -133,7 +135,7 @@ func (r *Repository) UpdateOrderStatus(ctx context.Context, id string) (model.Or
 	)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return "", fmt.Errorf("%w: order not found", ErrNotFound)
+			return "", fmt.Errorf("%w: order not found", repository.ErrNotFound)
 		}
 		return "", fmt.Errorf("update order status unexpected error: %w", err)
 	}
@@ -159,7 +161,7 @@ func (r *Repository) UpdateOrderStatusToConfirm(ctx context.Context, id string) 
 	)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return "", fmt.Errorf("%w: order not found", ErrNotFound)
+			return "", fmt.Errorf("%w: order not found", repository.ErrNotFound)
 		}
 		return "", fmt.Errorf("update order status unexpected error: %w", err)
 	}
@@ -182,7 +184,7 @@ func (r *Repository) GetTotalPrice(ctx context.Context, productList []string) (u
 	err := row.Scan(&totalPrice)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return 0, fmt.Errorf("%w: products not found", ErrNotFound)
+			return 0, fmt.Errorf("%w: products not found", repository.ErrNotFound)
 		}
 		return 0, fmt.Errorf("get total price unexpected error: %w", err)
 	}
@@ -192,7 +194,7 @@ func (r *Repository) GetTotalPrice(ctx context.Context, productList []string) (u
 
 func (r *Repository) GetTotalPriceByID(ctx context.Context, id string) (uint, error) {
 	if id == "" {
-		return 0, fmt.Errorf("%w: empty id", ErrInvalidID)
+		return 0, fmt.Errorf("%w: empty id", repository.ErrInvalidID)
 	}
 	sb := sqlbuilder.NewSelectBuilder()
 	sb.SetFlavor(sqlbuilder.PostgreSQL)
@@ -206,13 +208,13 @@ func (r *Repository) GetTotalPriceByID(ctx context.Context, id string) (uint, er
 	err := row.Scan(&totalPrice)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return 0, fmt.Errorf("%w: order with id %s not found", ErrNotFound, id)
+			return 0, fmt.Errorf("%w: order with id %s not found", repository.ErrNotFound, id)
 		}
 
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
 			if pgErr.Code == "57014" {
-				return 0, fmt.Errorf("%w: %v", ErrQueryTimeout, err)
+				return 0, fmt.Errorf("%w: %v", repository.ErrQueryTimeout, err)
 			}
 		}
 

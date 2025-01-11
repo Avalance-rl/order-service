@@ -3,4 +3,5 @@
 /config/
 /logs/
 /.env
-/internal/infrastructure/db/order/order_test.go
+/internal/infrastructure/repository/order/order_test.go
+/internal/infrastructure/repository/order/order_test.go

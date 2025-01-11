@@ -7,8 +7,8 @@ import (
 	serviceOrder "github.com/Avalance-rl/order-service/internal/domain/service"
 
 	"github.com/Avalance-rl/order-service/internal/config"
-	orderRepo "github.com/Avalance-rl/order-service/internal/infrastructure/db/order"
 	grpcServer "github.com/Avalance-rl/order-service/internal/infrastructure/grpc/server/order"
+	orderRepo "github.com/Avalance-rl/order-service/internal/infrastructure/repository/order"
 	"go.uber.org/zap"
 )
 
