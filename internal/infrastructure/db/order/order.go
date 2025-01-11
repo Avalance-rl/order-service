@@ -13,7 +13,7 @@ import (
 )
 
 func (r *Repository) InsertOrder(ctx context.Context, order model.Order) (model.Order, error) {
-	repoOrder := converter.ToOrderFromUsecase(&order)
+	repoOrder := converter.ToOrderFromService(&order)
 
 	productList := "{" + strings.Join(repoOrder.ProductList, ",") + "}"
 
