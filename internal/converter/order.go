@@ -7,15 +7,7 @@ import (
 )
 
 func ToOrderFromUsecase(order *model.Order) *desc.Order {
-	var status desc.OrderStatus
-	switch order.OrderStatus {
-	case model.Unpaid:
-		status = desc.OrderStatus(0)
-	case model.Paid:
-		status = desc.OrderStatus(1)
-	case model.Completed:
-		status = desc.OrderStatus(2)
-	}
+	status := ToOrderStatusFromUsecase(order.OrderStatus)
 	return &desc.Order{
 		Id:          order.ID,
 		CustomerId:  order.CustomerID,
@@ -46,4 +38,17 @@ func ToOrderFromDesc(order *desc.Order) *model.Order {
 		CreatedAt:   order.CreatedAt.AsTime(),
 		UpdatedAt:   order.UpdatedAt.AsTime(),
 	}
+}
+
+func ToOrderStatusFromUsecase(orderStatus model.OrderStatus) desc.OrderStatus {
+	var status desc.OrderStatus
+	switch orderStatus {
+	case model.Unpaid:
+		status = desc.OrderStatus(0)
+	case model.Paid:
+		status = desc.OrderStatus(1)
+	case model.Completed:
+		status = desc.OrderStatus(2)
+	}
+	return status
 }
