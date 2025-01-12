@@ -27,7 +27,10 @@ type Database struct {
 	MaxConns int32  `yaml:"max_conns"`
 }
 
-type Redis struct{}
+type Redis struct {
+	Address  string `yaml:"address"`
+	Password string `yaml:"password"`
+}
 
 func Load(configPath string) (Config, error) {
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {

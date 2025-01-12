@@ -7,7 +7,7 @@ import (
 	desc "github.com/Avalance-rl/order-service/proto/pkg/order_v1"
 )
 
-type UsecaseOrder interface {
+type ServiceOrder interface {
 	CreateOrder(ctx context.Context, order model.Order) (model.Order, error)
 	GetOrders(ctx context.Context, id string) ([]model.Order, error)
 	UpdateOrderStatus(ctx context.Context, id string) (model.OrderStatus, error)
@@ -17,11 +17,11 @@ type UsecaseOrder interface {
 
 type Implementation struct {
 	desc.UnimplementedOrderServiceServer
-	usecaseOrder UsecaseOrder
+	serviceOrder ServiceOrder
 }
 
-func NewImplementation(usecaseOrder UsecaseOrder) *Implementation {
+func NewImplementation(serviceOrder ServiceOrder) *Implementation {
 	return &Implementation{
-		usecaseOrder: usecaseOrder,
+		serviceOrder: serviceOrder,
 	}
 }

@@ -2,10 +2,10 @@ package converter
 
 import (
 	"github.com/Avalance-rl/order-service/internal/domain/model"
-	repoModel "github.com/Avalance-rl/order-service/internal/infrastructure/db/order/model"
+	repoModel "github.com/Avalance-rl/order-service/internal/infrastructure/repository/pgx/order/model"
 )
 
-func ToOrderFromUsecase(order *model.Order) *repoModel.Order {
+func ToOrderFromService(order *model.Order) *repoModel.Order {
 	return &repoModel.Order{
 		ID:          order.ID,
 		CustomerID:  order.CustomerID,

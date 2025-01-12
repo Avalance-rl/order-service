@@ -2,20 +2,22 @@ package application
 
 import (
 	"context"
+	"github.com/Avalance-rl/order-service/internal/infrastructure/cache/redis"
+	orderRepo "github.com/Avalance-rl/order-service/internal/infrastructure/repository/pgx/order"
 	"os"
 
-	usecaseOrder "github.com/Avalance-rl/order-service/internal/domain/usecase"
+	serviceOrder "github.com/Avalance-rl/order-service/internal/domain/service"
 
 	"github.com/Avalance-rl/order-service/internal/config"
-	orderRepo "github.com/Avalance-rl/order-service/internal/infrastructure/db/order"
 	grpcServer "github.com/Avalance-rl/order-service/internal/infrastructure/grpc/server/order"
 	"go.uber.org/zap"
 )
 
 type provider struct {
 	config          config.Config
-	orderRepository usecaseOrder.Repository
-	orderUsecase    grpcServer.UsecaseOrder
+	orderRepository serviceOrder.Repository
+	orderCache      serviceOrder.Cache
+	orderService    grpcServer.ServiceOrder
 	orderImpl       *grpcServer.Implementation
 	ctx             context.Context
 	logger          *zap.Logger
@@ -35,7 +37,7 @@ func (p *provider) Config() config.Config {
 	return p.config
 }
 
-func (p *provider) OrderRepository() usecaseOrder.Repository {
+func (p *provider) OrderRepository() serviceOrder.Repository {
 	if p.orderRepository == nil {
 
 		rep, err := orderRepo.NewRepository(
@@ -57,20 +59,37 @@ func (p *provider) OrderRepository() usecaseOrder.Repository {
 	return p.orderRepository
 }
 
-func (p *provider) OrderUsecase() grpcServer.UsecaseOrder {
-	if p.orderUsecase == nil {
-		p.orderUsecase = usecaseOrder.NewOrderService(
+func (p *provider) OrderCache() serviceOrder.Cache {
+	if p.orderCache == nil {
+
+		cache, err := redis.NewCache(
+			p.Config().Redis.Address,
+			p.Config().Redis.Password,
+		)
+		if err != nil {
+			p.logger.Fatal("orderCache error", zap.Error(err))
+		}
+		p.orderCache = cache
+	}
+
+	return p.orderCache
+}
+
+func (p *provider) OrderService() grpcServer.ServiceOrder {
+	if p.orderService == nil {
+		p.orderService = serviceOrder.NewOrderService(
 			p.logger,
 			p.OrderRepository(),
+			p.OrderCache(),
 		)
 	}
 
-	return p.orderUsecase
+	return p.orderService
 }
 
 func (p *provider) OrderImpl() *grpcServer.Implementation {
 	if p.orderImpl == nil {
-		p.orderImpl = grpcServer.NewImplementation(p.OrderUsecase())
+		p.orderImpl = grpcServer.NewImplementation(p.OrderService())
 	}
 
 	return p.orderImpl

@@ -6,8 +6,8 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func ToOrderFromUsecase(order *model.Order) *desc.Order {
-	status := ToOrderStatusFromUsecase(order.OrderStatus)
+func ToOrderFromService(order *model.Order) *desc.Order {
+	status := ToOrderStatusFromService(order.OrderStatus)
 	return &desc.Order{
 		Id:          order.ID,
 		CustomerId:  order.CustomerID,
@@ -40,7 +40,7 @@ func ToOrderFromDesc(order *desc.Order) *model.Order {
 	}
 }
 
-func ToOrderStatusFromUsecase(orderStatus model.OrderStatus) desc.OrderStatus {
+func ToOrderStatusFromService(orderStatus model.OrderStatus) desc.OrderStatus {
 	var status desc.OrderStatus
 	switch orderStatus {
 	case model.Unpaid:
