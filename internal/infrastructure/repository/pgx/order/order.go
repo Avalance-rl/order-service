@@ -4,20 +4,19 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/Avalance-rl/order-service/internal/infrastructure/repository/pgx/order/converter"
+	repoModel "github.com/Avalance-rl/order-service/internal/infrastructure/repository/pgx/order/model"
 	"strings"
 
 	"github.com/Avalance-rl/order-service/internal/infrastructure/repository"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 
-	"github.com/Avalance-rl/order-service/internal/infrastructure/repository/order/converter"
-
 	"github.com/Avalance-rl/order-service/internal/domain/model"
-	repoModel "github.com/Avalance-rl/order-service/internal/infrastructure/repository/order/model"
 	"github.com/huandu/go-sqlbuilder"
 )
 
-func (r *Repository) InsertOrder(ctx context.Context, order model.Order) (model.Order, error) {
+func (r *Pgx) InsertOrder(ctx context.Context, order model.Order) (model.Order, error) {
 	if len(order.ProductList) == 0 {
 		return model.Order{}, fmt.Errorf("%w: empty product list", repository.ErrInvalidInput)
 	}
@@ -72,7 +71,7 @@ func (r *Repository) InsertOrder(ctx context.Context, order model.Order) (model.
 	return *converter.ToOrderFromRepo(repoOrder), nil
 }
 
-func (r *Repository) SelectOrders(ctx context.Context, id string) ([]model.Order, error) {
+func (r *Pgx) SelectOrders(ctx context.Context, id string) ([]model.Order, error) {
 	sb := sqlbuilder.NewSelectBuilder()
 	sb.SetFlavor(sqlbuilder.PostgreSQL)
 	sb.Select("*").From("orders").Where(sb.Equal("id", id))
@@ -117,7 +116,7 @@ func (r *Repository) SelectOrders(ctx context.Context, id string) ([]model.Order
 	return orders, nil
 }
 
-func (r *Repository) UpdateOrderStatus(ctx context.Context, id string) (model.OrderStatus, error) {
+func (r *Pgx) UpdateOrderStatus(ctx context.Context, id string) (model.OrderStatus, error) {
 	sb := sqlbuilder.NewUpdateBuilder()
 	sb.SetFlavor(sqlbuilder.PostgreSQL)
 	sb.Update("orders").
@@ -143,7 +142,7 @@ func (r *Repository) UpdateOrderStatus(ctx context.Context, id string) (model.Or
 	return orderStatus, nil
 }
 
-func (r *Repository) UpdateOrderStatusToConfirm(ctx context.Context, id string) (model.OrderStatus, error) {
+func (r *Pgx) UpdateOrderStatusToConfirm(ctx context.Context, id string) (model.OrderStatus, error) {
 	sb := sqlbuilder.NewUpdateBuilder()
 	sb.SetFlavor(sqlbuilder.PostgreSQL)
 	sb.Update("orders").
@@ -169,7 +168,7 @@ func (r *Repository) UpdateOrderStatusToConfirm(ctx context.Context, id string) 
 	return orderStatus, nil
 }
 
-func (r *Repository) GetTotalPrice(ctx context.Context, productList []string) (uint, error) {
+func (r *Pgx) GetTotalPrice(ctx context.Context, productList []string) (uint, error) {
 	sb := sqlbuilder.NewSelectBuilder()
 	sb.SetFlavor(sqlbuilder.PostgreSQL)
 	sb.Select("SUM(price)").
@@ -192,7 +191,7 @@ func (r *Repository) GetTotalPrice(ctx context.Context, productList []string) (u
 	return totalPrice, nil
 }
 
-func (r *Repository) GetTotalPriceByID(ctx context.Context, id string) (uint, error) {
+func (r *Pgx) GetTotalPriceByID(ctx context.Context, id string) (uint, error) {
 	if id == "" {
 		return 0, fmt.Errorf("%w: empty id", repository.ErrInvalidID)
 	}

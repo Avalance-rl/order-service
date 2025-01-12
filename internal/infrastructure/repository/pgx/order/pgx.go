@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
-type Repository struct {
+type Pgx struct {
 	pool   *pgxpool.Pool
 	logger *zap.Logger
 }
@@ -17,7 +17,7 @@ func NewRepository(
 	host, port, sslMode, user, password, name string,
 	maxConns int32,
 	logger *zap.Logger,
-) (*Repository, error) {
+) (*Pgx, error) {
 	config, err := pgxpool.ParseConfig(buildPostgresDns(host, port, sslMode, user, password, name))
 	if err != nil {
 		return nil, err
@@ -32,10 +32,10 @@ func NewRepository(
 	if err != nil {
 		return nil, err
 	}
-	return &Repository{db, logger}, nil
+	return &Pgx{db, logger}, nil
 }
 
-func (r *Repository) Close(ctx context.Context) error {
+func (r *Pgx) Close(ctx context.Context) error {
 	done := make(chan struct{}, 1)
 	go func() {
 		r.pool.Close()

@@ -2,13 +2,13 @@ package application
 
 import (
 	"context"
+	orderRepo "github.com/Avalance-rl/order-service/internal/infrastructure/repository/pgx/order"
 	"os"
 
 	serviceOrder "github.com/Avalance-rl/order-service/internal/domain/service"
 
 	"github.com/Avalance-rl/order-service/internal/config"
 	grpcServer "github.com/Avalance-rl/order-service/internal/infrastructure/grpc/server/order"
-	orderRepo "github.com/Avalance-rl/order-service/internal/infrastructure/repository/order"
 	"go.uber.org/zap"
 )
 

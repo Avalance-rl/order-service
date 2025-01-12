@@ -2,7 +2,7 @@ package converter
 
 import (
 	"github.com/Avalance-rl/order-service/internal/domain/model"
-	repoModel "github.com/Avalance-rl/order-service/internal/infrastructure/repository/order/model"
+	repoModel "github.com/Avalance-rl/order-service/internal/infrastructure/repository/pgx/order/model"
 )
 
 func ToOrderFromService(order *model.Order) *repoModel.Order {

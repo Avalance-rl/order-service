@@ -3,5 +3,5 @@
 /config/
 /logs/
 /.env
-/internal/infrastructure/repository/order/order_test.go
-/internal/infrastructure/repository/order/order_test.go
+/internal/infrastructure/repository/pgx/order/order_test.go
+/internal/infrastructure/repository/pgx/order/order_test.go
