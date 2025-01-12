@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"github.com/Avalance-rl/order-service/internal/infrastructure/cache/redis"
 	orderRepo "github.com/Avalance-rl/order-service/internal/infrastructure/repository/pgx/order"
 	"os"
 
@@ -15,6 +16,7 @@ import (
 type provider struct {
 	config          config.Config
 	orderRepository serviceOrder.Repository
+	orderCache      serviceOrder.Cache
 	orderService    grpcServer.ServiceOrder
 	orderImpl       *grpcServer.Implementation
 	ctx             context.Context
@@ -57,11 +59,28 @@ func (p *provider) OrderRepository() serviceOrder.Repository {
 	return p.orderRepository
 }
 
+func (p *provider) OrderCache() serviceOrder.Cache {
+	if p.orderCache == nil {
+
+		cache, err := redis.NewCache(
+			p.Config().Redis.Address,
+			p.Config().Redis.Password,
+		)
+		if err != nil {
+			p.logger.Fatal("orderCache error", zap.Error(err))
+		}
+		p.orderCache = cache
+	}
+
+	return p.orderCache
+}
+
 func (p *provider) OrderService() grpcServer.ServiceOrder {
 	if p.orderService == nil {
 		p.orderService = serviceOrder.NewOrderService(
 			p.logger,
 			p.OrderRepository(),
+			p.OrderCache(),
 		)
 	}
 

@@ -16,15 +16,21 @@ type Repository interface {
 	GetTotalPriceByID(ctx context.Context, id string) (uint, error)
 }
 
+type Cache interface {
+	SelectOrders(ctx context.Context, id string) ([]model.Order, error)
+}
+
 type Service struct {
 	logger     *zap.Logger
 	repository Repository
+	cache      Cache
 }
 
-func NewOrderService(logger *zap.Logger, repository Repository) *Service {
+func NewOrderService(logger *zap.Logger, repository Repository, cache Cache) *Service {
 	return &Service{
 		logger:     logger,
 		repository: repository,
+		cache:      cache,
 	}
 }
 

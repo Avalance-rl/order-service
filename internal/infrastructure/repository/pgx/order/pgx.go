@@ -28,10 +28,10 @@ func NewRepository(
 	if err != nil {
 		return nil, err
 	}
-	err = db.Ping(context.Background())
-	if err != nil {
+	if err = db.Ping(context.Background()); err != nil {
 		return nil, err
 	}
+
 	return &Pgx{db, logger}, nil
 }
 

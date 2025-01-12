@@ -9,12 +9,17 @@ type Redis struct {
 	rdb *redis.Client
 }
 
-func New(ctx context.Context, addr, pass string) *Redis {
+func NewCache(addr, pass string) (*Redis, error) {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     addr,
 		Password: pass,
 		DB:       0,
 	})
 
-	return &Redis{rdb}
+	stcmd := rdb.Ping(context.Background())
+	if err := stcmd.Err(); err != nil {
+		return nil, err
+	}
+
+	return &Redis{rdb}, nil
 }
